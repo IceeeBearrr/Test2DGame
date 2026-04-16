@@ -8,9 +8,11 @@ public class PlayerMovement : MonoBehaviour
     private Vector2 moveInput;  //when right (1, 0), when left (-1, 0)
     private Animator animator;
     private SpriteRenderer spriteRenderer;
+    private BoxCollider2D boxCollider;
 
     [SerializeField] private float speed = 7f;
     [SerializeField] private float jump = 14f;
+    [SerializeField] private LayerMask jumpableGround;
 
     private enum MovementState { idle, running, jumping, falling };
 
@@ -20,7 +22,7 @@ public class PlayerMovement : MonoBehaviour
         rb = GetComponent<Rigidbody2D>();
         animator = GetComponent<Animator>();
         spriteRenderer = GetComponent<SpriteRenderer>();
-
+        boxCollider = GetComponent<BoxCollider2D>();
     }
 
     // Reads movement input every frame
@@ -33,7 +35,7 @@ public class PlayerMovement : MonoBehaviour
         rb.linearVelocity = new Vector2(moveInput.x * speed, rb.linearVelocity.y);
 
         // When Jump is triggered, x-axis remains unchanged while y-axis is set to jump value
-        if (inputActions.Player.Jump.triggered)
+        if (inputActions.Player.Jump.triggered && IsGrounded())
         {
             rb.linearVelocity = new Vector2(rb.linearVelocity.x, jump);
         }
@@ -72,6 +74,12 @@ public class PlayerMovement : MonoBehaviour
         }
         
         animator.SetInteger("state", (int)state);
+    }
+
+    private bool IsGrounded()
+    {
+        //create a box around the player return true if the player collides with the ground layer
+        return Physics2D.BoxCast(boxCollider.bounds.center, boxCollider.bounds.size, 0f, Vector2.down, .1f, jumpableGround);
     }
 
     // Prepare input system before start

@@ -6,6 +6,8 @@ public class PlayerLife : MonoBehaviour
     private Animator animator;
     private Rigidbody2D rb;
 
+    [SerializeField] private AudioSource deathSoundEffect;
+
     private void Start()
     {
         animator = GetComponent<Animator>();
@@ -15,7 +17,7 @@ public class PlayerLife : MonoBehaviour
     // when the player collides with an object tagged "Trap", the player will die
     private void OnCollisionEnter2D(Collision2D collision)
     {
-        if (collision.gameObject.CompareTag("Trap"))
+        if (collision.gameObject.CompareTag("Trap") || collision.gameObject.CompareTag("Enemy"))
         {
             Die();
         }
@@ -24,6 +26,7 @@ public class PlayerLife : MonoBehaviour
     // body of the player will be static and the death animation will be triggered
     private void Die()
     {
+        deathSoundEffect.Play();
         rb.bodyType = RigidbodyType2D.Static;
         animator.SetTrigger("death");
     }

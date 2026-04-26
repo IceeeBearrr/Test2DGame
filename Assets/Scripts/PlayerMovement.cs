@@ -13,6 +13,7 @@ public class PlayerMovement : MonoBehaviour
     [SerializeField] private float speed = 7f;
     [SerializeField] private float jump = 14f;
     [SerializeField] private LayerMask jumpableGround;
+    [SerializeField] private AudioSource jumpSoundEffect;
 
     private enum MovementState { idle, running, jumping, falling };
 
@@ -37,6 +38,7 @@ public class PlayerMovement : MonoBehaviour
         // When Jump is triggered, x-axis remains unchanged while y-axis is set to jump value
         if (inputActions.Player.Jump.triggered && IsGrounded())
         {
+            jumpSoundEffect.Play();
             rb.linearVelocity = new Vector2(rb.linearVelocity.x, jump);
         }
 
